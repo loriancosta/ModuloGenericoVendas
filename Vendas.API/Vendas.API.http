@@ -1,0 +1,6 @@
+@Vendas.API_HostAddress = http://localhost:5093
+
+GET {{Vendas.API_HostAddress}}/vendas/
+Accept: application/json
+
+###
