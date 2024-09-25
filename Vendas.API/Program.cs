@@ -12,7 +12,7 @@ var builder = WebApplication.CreateBuilder(args);
 --------------------
 ----- Serilog ------
 --------------------
- */
+*/
 
 builder.Host.UseSerilog((context, config) =>
 {
@@ -22,28 +22,23 @@ builder.Host.UseSerilog((context, config) =>
         .Enrich.FromLogContext();
 });
 
-builder.Services.AddControllers();
-
 /*
 --------------------
------ Services -----
+--- Add Services ---
 --------------------
- */
+*/
+
+builder.Services.AddControllers();
 
 
 builder.Services.AddScoped<IVendaEventService, VendaEventService>();
 builder.Services.AddScoped<IItemVendaEventService, ItemVendaEventService>();
 
-/*
---------------------
---- Repositories ---
---------------------
- */
 
 builder.Services.AddScoped<IVendaRepository, VendaRepository>();
 builder.Services.AddScoped<IItemVendaRepository, ItemVendaRepository>();
 
-// SQL Server
+
 builder.Services.AddDbContext<VendasDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
@@ -53,6 +48,11 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
+/*
+--------------------
+---- Middlewares ---
+--------------------
+*/
 
 if (app.Environment.IsDevelopment())
 {
@@ -60,13 +60,12 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI(c =>
     {
         c.SwaggerEndpoint("/swagger/v1/swagger.json", "Vendas API v1.0");
-
     });
 }
 
 app.UseHttpsRedirection();
 app.UseAuthorization();
-app.MapControllers();
 
+app.MapControllers();
 
 app.Run();

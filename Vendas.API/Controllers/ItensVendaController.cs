@@ -48,13 +48,13 @@ namespace Vendas.API.Controllers
 
             _itemVendaEventService.ItemCriado(itemVenda);
 
-            return CreatedAtAction(nameof(GetItemVenda), new { id = itemVenda.Id }, itemVenda);
+            return CreatedAtAction(nameof(GetItemVenda), new { id = itemVenda.ObterVendaId() }, itemVenda);
         }
 
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateItemVenda(int id, ItemVenda itemVenda)
         {
-            if (id != itemVenda.Id)
+            if (id != itemVenda.ObterId())
             {
                 return BadRequest();
             }

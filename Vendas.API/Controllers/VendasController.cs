@@ -47,13 +47,13 @@ namespace Vendas.API.Controllers
             // Publicar evento de venda criada
             _vendaEventService.CompraCriada(venda);
 
-            return CreatedAtAction(nameof(GetVenda), new { id = venda.Id }, venda);
+            return CreatedAtAction(nameof(GetVenda), new { id = venda.ObterId() }, venda);
         }
 
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateVenda(int id, Venda venda)
         {
-            if (id != venda.Id)
+            if (id != venda.ObterId())
             {
                 return BadRequest();
             }
@@ -80,7 +80,7 @@ namespace Vendas.API.Controllers
             }
 
             var venda = await _vendaRepository.GetByIdAsync(id);
-            venda.IsCancelado = true;
+            venda.CancelarVenda();
             await _vendaRepository.SaveChangesAsync();
 
             _vendaEventService.CompraCancelada(venda);
