@@ -17,12 +17,10 @@ namespace Vendas.Data.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    NumeroVenda = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    NumeroVenda = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     DataVenda = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Cliente = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ValorTotal = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    Filial = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Cancelada = table.Column<bool>(type: "bit", nullable: false)
+                    ClienteId = table.Column<int>(type: "int", nullable: false),
+                    NomeCliente = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -35,18 +33,18 @@ namespace Vendas.Data.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Produto = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Quantidade = table.Column<int>(type: "int", nullable: false),
-                    ValorUnitario = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    Desconto = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    ValorTotal = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    VendaId = table.Column<int>(type: "int", nullable: false)
+                    VendaId = table.Column<int>(type: "int", nullable: false),
+                    ProdutoId = table.Column<int>(type: "int", nullable: false),
+                    NomeProduto = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    Quantidade = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    PrecoUnitario = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    Desconto = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_ItensVenda", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_ItensVenda_Vendas_VendaId",
+                        name: "FK_ItemVenda_Venda",
                         column: x => x.VendaId,
                         principalTable: "Vendas",
                         principalColumn: "Id",

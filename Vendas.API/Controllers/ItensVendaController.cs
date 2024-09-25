@@ -1,8 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Vendas.Data.Repositories.Interfaces;
+using Vendas.Application.Services.Interfaces;
 using Vendas.Domain.Entities;
-using Vendas.Domain.Services.Implementations;
-using Vendas.Domain.Services.Interfaces;
 
 namespace Vendas.API.Controllers
 {
@@ -10,28 +8,27 @@ namespace Vendas.API.Controllers
     [ApiController]
     public class ItensVendaController : ControllerBase
     {
-
-        private readonly IItemVendaRepository _itemVendaRepository;
+        private readonly IItemVendaService _itemVendaService;
         private readonly IItemVendaEventService _itemVendaEventService;
 
-        public ItensVendaController(IItemVendaRepository itemVendaRepository, IItemVendaEventService itemVendaEventService)
+        public ItensVendaController(IItemVendaService itemVendaService, IItemVendaEventService itemVendaEventService)
         {
-            _itemVendaRepository = itemVendaRepository;
+            _itemVendaService = itemVendaService;
             _itemVendaEventService = itemVendaEventService;
         }
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ItemVenda>>> GetItensVenda()
         {
-            var itensVenda = await _itemVendaRepository.GetAllAsync();
+            var itensVenda = await _itemVendaService.GetAllItensVendaAsync();
             return Ok(itensVenda);
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<ItemVenda>> GetItemVenda(int id)
         {
-            var itemVenda = await _itemVendaRepository.GetByIdAsync(id);
-            
+            var itemVenda = await _itemVendaService.GetItemVendaByIdAsync(id);
+
             if (itemVenda == null)
             {
                 return NotFound();
@@ -43,18 +40,16 @@ namespace Vendas.API.Controllers
         [HttpPost]
         public async Task<ActionResult<ItemVenda>> CreateItemVenda(ItemVenda itemVenda)
         {
-            await _itemVendaRepository.AddAsync(itemVenda);
-            await _itemVendaRepository.SaveChangesAsync();
-
+            await _itemVendaService.CreateItemVendaAsync(itemVenda);
             _itemVendaEventService.ItemCriado(itemVenda);
 
-            return CreatedAtAction(nameof(GetItemVenda), new { id = itemVenda.ObterVendaId() }, itemVenda);
+            return CreatedAtAction(nameof(GetItemVenda), new { id = itemVenda.VendaId }, itemVenda);
         }
 
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateItemVenda(int id, ItemVenda itemVenda)
         {
-            if (id != itemVenda.ObterId())
+            if (id != itemVenda.Id)
             {
                 return BadRequest();
             }
@@ -64,9 +59,7 @@ namespace Vendas.API.Controllers
                 return NotFound();
             }
 
-            _itemVendaRepository.Update(itemVenda);
-            await _itemVendaRepository.SaveChangesAsync();
-
+            await _itemVendaService.UpdateItemVendaAsync(itemVenda);
             _itemVendaEventService.ItemAlterado(itemVenda);
 
             return NoContent();
@@ -80,9 +73,8 @@ namespace Vendas.API.Controllers
                 return NotFound();
             }
 
-            var itemVenda = await _itemVendaRepository.GetByIdAsync(id);
-            _itemVendaRepository.Remove(itemVenda);
-            await _itemVendaRepository.SaveChangesAsync();
+            var itemVenda = await _itemVendaService.GetItemVendaByIdAsync(id);
+            await _itemVendaService.RemoveItemVendaAsync(id);
 
             _itemVendaEventService.ItemCancelado(itemVenda);
 
@@ -91,9 +83,8 @@ namespace Vendas.API.Controllers
 
         private async Task<bool> ItemVendaExists(int id)
         {
-            var itemVenda = await _itemVendaRepository.GetByIdAsync(id);
+            var itemVenda = await _itemVendaService.GetItemVendaByIdAsync(id);
             return itemVenda != null;
         }
-
     }
 }

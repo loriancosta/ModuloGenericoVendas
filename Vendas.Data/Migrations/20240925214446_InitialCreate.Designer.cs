@@ -12,8 +12,8 @@ using Vendas.Data.Context;
 namespace Vendas.Data.Migrations
 {
     [DbContext(typeof(VendasDbContext))]
-    [Migration("20240925192036_InitialCreate001")]
-    partial class InitialCreate001
+    [Migration("20240925214446_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -27,73 +27,76 @@ namespace Vendas.Data.Migrations
 
             modelBuilder.Entity("Vendas.Domain.Entities.ItemVenda", b =>
                 {
-                    b.Property<int>("_id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasColumnName("Id");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("_id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<decimal>("_desconto")
+                    b.Property<decimal>("Desconto")
                         .HasColumnType("decimal(18,2)")
                         .HasColumnName("Desconto");
 
-                    b.Property<string>("_nomeProduto")
+                    b.Property<string>("NomeProduto")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)")
                         .HasColumnName("NomeProduto");
 
-                    b.Property<decimal>("_precoUnitario")
+                    b.Property<decimal>("PrecoUnitario")
                         .HasColumnType("decimal(18,2)")
                         .HasColumnName("PrecoUnitario");
 
-                    b.Property<int>("_produtoId")
+                    b.Property<int>("ProdutoId")
                         .HasColumnType("int")
                         .HasColumnName("ProdutoId");
 
-                    b.Property<decimal>("_quantidade")
+                    b.Property<decimal>("Quantidade")
                         .HasColumnType("decimal(18,2)")
                         .HasColumnName("Quantidade");
 
-                    b.Property<int>("_vendaId")
+                    b.Property<int>("VendaId")
                         .HasColumnType("int")
                         .HasColumnName("VendaId");
 
-                    b.HasKey("_id");
+                    b.HasKey("Id");
 
-                    b.HasIndex("_vendaId");
+                    b.HasIndex("VendaId");
 
                     b.ToTable("ItensVenda");
                 });
 
             modelBuilder.Entity("Vendas.Domain.Entities.Venda", b =>
                 {
-                    b.Property<int>("_id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasColumnName("Id");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("_id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("_clienteId")
+                    b.Property<int>("ClienteId")
                         .HasColumnType("int")
                         .HasColumnName("ClienteId");
 
-                    b.Property<DateTime>("_dataVenda")
+                    b.Property<DateTime>("DataVenda")
                         .HasColumnType("datetime2")
                         .HasColumnName("DataVenda");
 
-                    b.Property<string>("_nomeCliente")
+                    b.Property<string>("NomeCliente")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)")
                         .HasColumnName("NomeCliente");
 
-                    b.Property<string>("_numeroVenda")
+                    b.Property<string>("NumeroVenda")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)")
                         .HasColumnName("NumeroVenda");
 
-                    b.HasKey("_id");
+                    b.HasKey("Id");
 
                     b.ToTable("Vendas");
                 });
@@ -102,7 +105,7 @@ namespace Vendas.Data.Migrations
                 {
                     b.HasOne("Vendas.Domain.Entities.Venda", null)
                         .WithMany("ItensVenda")
-                        .HasForeignKey("_vendaId")
+                        .HasForeignKey("VendaId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("FK_ItemVenda_Venda");

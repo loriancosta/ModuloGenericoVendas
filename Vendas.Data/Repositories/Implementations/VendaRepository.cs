@@ -1,24 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Vendas.Data.Context;
-using Vendas.Data.Repositories.Interfaces;
+﻿using Vendas.Data.Context;
 using Vendas.Domain.Entities;
+using Vendas.Domain.Interfaces;
 
 namespace Vendas.Data.Repositories.Implementations
 {
-    public class VendaRepository : Repository<Venda>, IVendaRepository
+    public class VendaRepository : GenericRepository<Venda>, IVendaRepository
     {
         public VendaRepository(VendasDbContext context) : base(context)
         {
 
-
-
         }
 
-        
+
     }
 
 }

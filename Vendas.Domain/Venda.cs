@@ -2,47 +2,53 @@
 {
     public class Venda
     {
-        private int _id;
-        private string _numeroVenda;
-        private DateTime _dataVenda;
-        private int _clienteId;
-        private string _nomeCliente;
+        public int Id { get; private set; }
+        public string NumeroVenda { get; private set; }
+        public DateTime DataVenda { get; private set; }
+        public int ClienteId { get; private set; }
+        public string NomeCliente { get; private set; }
 
-        private List<ItemVenda> _itensVenda;
+        public List<ItemVenda> ItensVenda { get; private set; } = new List<ItemVenda>();
+
         private bool _isCancelado = false;
 
-        public Venda(int id, string numeroVenda, DateTime dataVenda, int clienteId, string nomeCliente)
+        public Venda(string numeroVenda, DateTime dataVenda, int clienteId, string nomeCliente)
         {
-            _id = id;
-            _numeroVenda = numeroVenda;
-            _dataVenda = dataVenda;
-            _clienteId = clienteId;
-            _nomeCliente = nomeCliente;
-            _itensVenda = new List<ItemVenda>();
+            NumeroVenda = numeroVenda ?? throw new ArgumentNullException(nameof(numeroVenda));
+            DataVenda = dataVenda;
+            ClienteId = clienteId;
+            NomeCliente = nomeCliente ?? throw new ArgumentNullException(nameof(nomeCliente));
         }
 
-        public int ObterId() => _id;
-        public string ObterNumeroVenda() => _numeroVenda;
-        public DateTime ObterDataVenda() => _dataVenda;
-        public int ObterClienteId() => _clienteId;
-        public string ObterNomeCliente() => _nomeCliente;
+        public Venda(int id, string numeroVenda, DateTime dataVenda, int clienteId, string nomeCliente)
+            : this(numeroVenda, dataVenda, clienteId, nomeCliente)
+        {
+            Id = id;
+        }
 
-        public List<ItemVenda> ItensVenda => _itensVenda;
+        public bool RemoverItem(ItemVenda item)
+        {
+            if (_isCancelado)
+                throw new InvalidOperationException("Não é possível remover itens de uma venda cancelada.");
 
-        public bool RemoverItem(ItemVenda item) => _isCancelado
-          ? throw new InvalidOperationException("Não é possível remover itens de uma venda cancelada.")
-          : _itensVenda.Remove(item);
-
-        public bool CancelarVenda() => _isCancelado
-            ? throw new InvalidOperationException("A venda já foi cancelada.")
-            : _isCancelado = true;
+            return ItensVenda.Remove(item);
+        }
 
         public void AdicionarItem(ItemVenda item)
         {
             if (_isCancelado)
                 throw new InvalidOperationException("Não é possível adicionar itens a uma venda cancelada.");
 
-            _itensVenda.Add(item);
+            ItensVenda.Add(item);
+        }
+
+        public bool CancelarVenda()
+        {
+            if (_isCancelado)
+                throw new InvalidOperationException("A venda já foi cancelada.");
+
+            _isCancelado = true;
+            return _isCancelado;
         }
 
         public void AlterarCliente(int clienteId, string nomeCliente)
@@ -50,8 +56,8 @@
             if (string.IsNullOrWhiteSpace(nomeCliente))
                 throw new ArgumentNullException(nameof(nomeCliente));
 
-            _clienteId = clienteId;
-            _nomeCliente = nomeCliente;
+            ClienteId = clienteId;
+            NomeCliente = nomeCliente;
         }
     }
 }

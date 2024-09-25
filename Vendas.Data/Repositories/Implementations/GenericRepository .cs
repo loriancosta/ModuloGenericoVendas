@@ -1,15 +1,15 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Vendas.Data.Context;
-using Vendas.Data.Repositories.Interfaces;
+using Vendas.Domain.Interfaces;
 
 namespace Vendas.Data.Repositories.Implementations
 {
-    public class Repository<T> : IRepository<T> where T : class
+    public class GenericRepository<T> : IGenericRepository<T> where T : class
     {
         private readonly VendasDbContext _context;
         private readonly DbSet<T> _dbSet;
 
-        public Repository(VendasDbContext context)
+        public GenericRepository(VendasDbContext context)
         {
             _context = context;
             _dbSet = _context.Set<T>();
@@ -30,14 +30,18 @@ namespace Vendas.Data.Repositories.Implementations
             await _dbSet.AddAsync(entity);
         }
 
-        public void Update(T entity)
+        public async Task UpdateAsync(T entity)
         {
             _dbSet.Update(entity);
         }
 
-        public void Remove(T entity)
+        public async Task DeleteAsync(int id)
         {
-            _dbSet.Remove(entity);
+            var entity = await GetByIdAsync(id);
+            if (entity != null)
+            {
+                _dbSet.Remove(entity);
+            }
         }
 
         public async Task SaveChangesAsync()

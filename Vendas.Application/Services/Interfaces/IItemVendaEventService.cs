@@ -1,6 +1,6 @@
 ﻿using Vendas.Domain.Entities;
 
-namespace Vendas.Domain.Services.Interfaces
+namespace Vendas.Application.Services.Interfaces
 {
     public interface IItemVendaEventService
     {

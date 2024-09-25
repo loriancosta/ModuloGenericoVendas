@@ -1,10 +1,10 @@
 using Microsoft.EntityFrameworkCore;
 using Serilog;
+using Vendas.Application.Services.Implementations;
+using Vendas.Application.Services.Interfaces;
 using Vendas.Data.Context;
 using Vendas.Data.Repositories.Implementations;
-using Vendas.Data.Repositories.Interfaces;
-using Vendas.Domain.Services.Implementations;
-using Vendas.Domain.Services.Interfaces;
+using Vendas.Domain.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -30,18 +30,16 @@ builder.Host.UseSerilog((context, config) =>
 
 builder.Services.AddControllers();
 
-
 builder.Services.AddScoped<IVendaEventService, VendaEventService>();
 builder.Services.AddScoped<IItemVendaEventService, ItemVendaEventService>();
-
+builder.Services.AddScoped<IVendaService, VendaService>();
+builder.Services.AddScoped<IItemVendaService, ItemVendaService>();
 
 builder.Services.AddScoped<IVendaRepository, VendaRepository>();
 builder.Services.AddScoped<IItemVendaRepository, ItemVendaRepository>();
 
-
 builder.Services.AddDbContext<VendasDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

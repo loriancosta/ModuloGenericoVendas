@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Vendas.Data.Repositories.Interfaces;
+using Vendas.Application.Services.Interfaces;
 using Vendas.Domain.Entities;
-using Vendas.Domain.Services.Interfaces;
 
 namespace Vendas.API.Controllers
 {
@@ -9,28 +8,26 @@ namespace Vendas.API.Controllers
     [ApiController]
     public class VendasController : ControllerBase
     {
-
-
-        private readonly IVendaRepository _vendaRepository;
+        private readonly IVendaService _vendaService;
         private readonly IVendaEventService _vendaEventService;
 
-        public VendasController(IVendaRepository vendaRepository, IVendaEventService vendaEventService)
+        public VendasController(IVendaService vendaService, IVendaEventService vendaEventService)
         {
-            _vendaRepository = vendaRepository;
+            _vendaService = vendaService;
             _vendaEventService = vendaEventService;
         }
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Venda>>> GetVendas()
         {
-            var vendas = await _vendaRepository.GetAllAsync();
+            var vendas = await _vendaService.GetAllVendasAsync();
             return Ok(vendas);
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<Venda>> GetVenda(int id)
         {
-            var venda = await _vendaRepository.GetByIdAsync(id);
+            var venda = await _vendaService.GetVendaByIdAsync(id);
             if (venda == null)
             {
                 return NotFound();
@@ -38,22 +35,22 @@ namespace Vendas.API.Controllers
 
             return Ok(venda);
         }
+
         [HttpPost]
         public async Task<ActionResult<Venda>> CreateVenda(Venda venda)
         {
-            await _vendaRepository.AddAsync(venda);
-            await _vendaRepository.SaveChangesAsync();
+            await _vendaService.CreateVendaAsync(venda);
 
             // Publicar evento de venda criada
             _vendaEventService.CompraCriada(venda);
 
-            return CreatedAtAction(nameof(GetVenda), new { id = venda.ObterId() }, venda);
+            return CreatedAtAction(nameof(GetVenda), new { id = venda.Id }, venda);
         }
 
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateVenda(int id, Venda venda)
         {
-            if (id != venda.ObterId())
+            if (id != venda.Id)
             {
                 return BadRequest();
             }
@@ -63,8 +60,7 @@ namespace Vendas.API.Controllers
                 return NotFound();
             }
 
-            _vendaRepository.Update(venda);
-            await _vendaRepository.SaveChangesAsync();
+            await _vendaService.UpdateVendaAsync(venda);
 
             _vendaEventService.CompraAlterada(venda);
 
@@ -79,9 +75,9 @@ namespace Vendas.API.Controllers
                 return NotFound();
             }
 
-            var venda = await _vendaRepository.GetByIdAsync(id);
+            var venda = await _vendaService.GetVendaByIdAsync(id);
             venda.CancelarVenda();
-            await _vendaRepository.SaveChangesAsync();
+            await _vendaService.UpdateVendaAsync(venda);
 
             _vendaEventService.CompraCancelada(venda);
 
@@ -90,12 +86,8 @@ namespace Vendas.API.Controllers
 
         private async Task<bool> VendaExists(int id)
         {
-            var venda = await _vendaRepository.GetByIdAsync(id);
+            var venda = await _vendaService.GetVendaByIdAsync(id);
             return venda != null;
         }
-
-
-
-
     }
 }
