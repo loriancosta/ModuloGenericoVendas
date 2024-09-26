@@ -1,4 +1,6 @@
-﻿namespace Vendas.Application.Dtos
+﻿using Vendas.Domain.Entities;
+
+namespace Vendas.Application.Dtos
 {
     public class VendaDto
     {
@@ -7,6 +9,7 @@
         public DateTime DataVenda { get; set; }
         public int ClienteId { get; set; }
         public string NomeCliente { get; set; }
-        public List<ItemVendaDto> Itens { get; set; }
+        public List<ItemVendaDto> ItensVenda { get; set; } = new List<ItemVendaDto>();
+
     }
 }

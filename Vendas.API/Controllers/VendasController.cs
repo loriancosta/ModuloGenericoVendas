@@ -1,8 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Vendas.Application.Dtos;
 using Vendas.Application.Services.Interfaces;
 using Vendas.Domain.Entities;
-using Vendas.Application.Dtos;
-using AutoMapper;
 
 namespace Vendas.API.Controllers
 {
@@ -12,13 +11,11 @@ namespace Vendas.API.Controllers
     {
         private readonly IVendaService _vendaService;
         private readonly IVendaEventService _vendaEventService;
-        private readonly IMapper _mapper;
 
-        public VendasController(IVendaService vendaService, IVendaEventService vendaEventService, IMapper mapper)
+        public VendasController(IVendaService vendaService, IVendaEventService vendaEventService)
         {
             _vendaService = vendaService;
             _vendaEventService = vendaEventService;
-            _mapper = mapper;
         }
 
         [HttpGet]

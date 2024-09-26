@@ -41,7 +41,7 @@ namespace Vendas.Tests
                 new ProdutoDto { Descricao = "Smartwatch Fitness", Quantidade = 25, PrecoUnitario = 399.99m },
                 new ProdutoDto { Descricao = "Cabo USB-C 2 metros", Quantidade = 100, PrecoUnitario = 29.99m },
                 new ProdutoDto { Descricao = "Adaptador HDMI para USB-C", Quantidade = 40, PrecoUnitario = 59.90m },
-                new ProdutoDto { Descricao = "Monitor LED Full HD 24\"", Quantidade = 8, PrecoUnitario = 849.90m },
+                new ProdutoDto { Descricao = "Monitor LED Full HD 24", Quantidade = 8, PrecoUnitario = 849.90m },
                 new ProdutoDto { Descricao = "Webcam Full HD 1080p", Quantidade = 20, PrecoUnitario = 199.90m },
                 new ProdutoDto { Descricao = "SSD Externo 1TB", Quantidade = 15, PrecoUnitario = 499.99m },
                 new ProdutoDto { Descricao = "Hub USB 3.0 com 4 Portas", Quantidade = 50, PrecoUnitario = 99.90m },
@@ -62,7 +62,9 @@ namespace Vendas.Tests
 
             // Assert - Verifica se todos os produtos foram inseridos corretamente
             var produtosInseridos = await _context.Produtos.ToListAsync();
-            Assert.Equal(20, produtosInseridos.Count); // Verifica se 20 produtos foram inseridos
+
+            // Testando algumas regras
+            Assert.Equal(20, produtosInseridos.Count);            
             Assert.Contains(produtosInseridos, p => p.Descricao == "Fone de Ouvido Bluetooth");
             Assert.Contains(produtosInseridos, p => p.Descricao == "Caixa de Som Bluetooth");
         }

@@ -33,14 +33,23 @@ namespace Vendas.Application.Services.Implementations
 
         public async Task<int> CreateVendaAsync(VendaDto vendaDto)
         {
-            var venda = _mapper.Map<Venda>(vendaDto);
+            try
+            {
+                var venda = _mapper.Map<Venda>(vendaDto);
 
-            await _vendaRepository.AddAsync(venda);
-            await _vendaRepository.SaveChangesAsync();
+                await _vendaRepository.AddAsync(venda);
+                await _vendaRepository.SaveChangesAsync();
 
-            _vendaEventService.CompraCriada(venda);
+                _vendaEventService.CompraCriada(venda);
 
-            return venda.Id;
+                return venda.Id;
+
+            }
+            catch (Exception ex)
+            {
+                var erro = ex.Message;
+                throw;
+            }
         }
 
         public async Task UpdateVendaAsync(VendaDto vendaDto)

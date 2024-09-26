@@ -17,7 +17,7 @@ namespace Vendas.Application.Services.Implementations
             _mapper = mapper;
         }
 
-        public async Task<int> CadastrarProdutoAsync(ProdutoDto produtoDto)
+        public async Task<int> CreateProdutoAsync(ProdutoDto produtoDto)
         {
             var produto = _mapper.Map<Produto>(produtoDto);
             await _produtoRepository.AddAsync(produto);
@@ -25,10 +25,6 @@ namespace Vendas.Application.Services.Implementations
             return produto.Id;
         }
 
-        public async Task<ProdutoDto> ObterProdutoPorIdAsync(int id)
-        {
-            var produto = await _produtoRepository.GetByIdAsync(id);
-            return _mapper.Map<ProdutoDto>(produto);
-        }
+
     }
 }

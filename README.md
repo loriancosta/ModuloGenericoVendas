@@ -14,3 +14,5 @@
 
 Executar "migration_script.bat" disponível na raiz da solução
 
+Se por algum motivo der erro, executar o script "initial_create_table.sql" diretamente no banco
+

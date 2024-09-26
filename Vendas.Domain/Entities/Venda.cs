@@ -2,13 +2,13 @@
 {
     public class Venda
     {
-        public int Id { get; private set; }
-        public string NumeroVenda { get; private set; }
-        public DateTime DataVenda { get; private set; }
-        public int ClienteId { get; private set; }
-        public string NomeCliente { get; private set; }
+        public int Id { get; set; }
+        public string NumeroVenda { get; set; }
+        public DateTime DataVenda { get; set; }
+        public int ClienteId { get; set; }
+        public string NomeCliente { get; set; }
 
-        public List<ItemVenda> ItensVenda { get; private set; } = new List<ItemVenda>();
+        public List<ItemVenda> ItensVenda { get; set; } = new List<ItemVenda>();
         private bool _isCancelado;
 
         public Venda(string numeroVenda, DateTime dataVenda, int clienteId, string nomeCliente)
@@ -17,28 +17,6 @@
             DataVenda = dataVenda;
             ClienteId = clienteId;
             NomeCliente = !string.IsNullOrWhiteSpace(nomeCliente) ? nomeCliente : throw new ArgumentNullException(nameof(nomeCliente));
-        }
-
-        public Venda(int id, string numeroVenda, DateTime dataVenda, int clienteId, string nomeCliente)
-            : this(numeroVenda, dataVenda, clienteId, nomeCliente)
-        {
-            Id = id;
-        }
-
-        public bool RemoverItem(ItemVenda item)
-        {
-            if (_isCancelado)
-                throw new InvalidOperationException("Não é possível remover itens de uma venda cancelada.");
-
-            return ItensVenda.Remove(item);
-        }
-
-        public void AdicionarItem(ItemVenda item)
-        {
-            if (_isCancelado)
-                throw new InvalidOperationException("Não é possível adicionar itens a uma venda cancelada.");
-
-            ItensVenda.Add(item);
         }
 
         public bool CancelarVenda()
@@ -50,13 +28,5 @@
             return _isCancelado;
         }
 
-        public void AlterarCliente(int clienteId, string nomeCliente)
-        {
-            if (string.IsNullOrWhiteSpace(nomeCliente))
-                throw new ArgumentNullException(nameof(nomeCliente));
-
-            ClienteId = clienteId;
-            NomeCliente = nomeCliente;
-        }
     }
 }

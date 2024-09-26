@@ -2,11 +2,10 @@
 
 namespace Vendas.Domain.Interfaces
 {
-    public interface IProdutoRepository
+    public interface IProdutoRepository : IGenericRepository<Produto>
     {
-        Task AddAsync(Produto produto);
-        Task<Produto> GetByIdAsync(int id);
-        Task<IEnumerable<Produto>> GetAllAsync();
-        Task SaveChangesAsync();
+
+
+
     }
 }

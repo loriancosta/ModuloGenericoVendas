@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 using Vendas.Application.Services.Implementations;
@@ -8,9 +9,6 @@ using Vendas.Domain.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Configurações do AutoMapper
-builder.Services.AddAutoMapper(typeof(MappingProfile));
-
 // Serilog
 builder.Host.UseSerilog((context, config) =>
 {
@@ -20,16 +18,21 @@ builder.Host.UseSerilog((context, config) =>
         .Enrich.FromLogContext();
 });
 
+// Configurações do AutoMapper
+builder.Services.AddAutoMapper(typeof(MappingProfile));
 
 builder.Services.AddControllers();
 
 builder.Services.AddScoped<IVendaEventService, VendaEventService>();
 builder.Services.AddScoped<IItemVendaEventService, ItemVendaEventService>();
-builder.Services.AddScoped<IVendaService, VendaService>();
-builder.Services.AddScoped<IItemVendaService, ItemVendaService>();
 
+builder.Services.AddScoped<IVendaService, VendaService>();
 builder.Services.AddScoped<IVendaRepository, VendaRepository>();
+
+builder.Services.AddScoped<IItemVendaService, ItemVendaService>();
 builder.Services.AddScoped<IItemVendaRepository, ItemVendaRepository>();
+
+builder.Services.AddScoped<IProdutoService, ProdutoService>();
 builder.Services.AddScoped<IProdutoRepository, ProdutoRepository>();
 
 builder.Services.AddDbContext<VendasDbContext>(options =>
