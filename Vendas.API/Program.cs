@@ -30,6 +30,7 @@ builder.Services.AddScoped<IItemVendaService, ItemVendaService>();
 
 builder.Services.AddScoped<IVendaRepository, VendaRepository>();
 builder.Services.AddScoped<IItemVendaRepository, ItemVendaRepository>();
+builder.Services.AddScoped<IProdutoRepository, ProdutoRepository>();
 
 builder.Services.AddDbContext<VendasDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));

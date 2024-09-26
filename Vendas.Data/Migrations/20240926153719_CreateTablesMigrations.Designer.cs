@@ -12,8 +12,8 @@ using Vendas.Data.Context;
 namespace Vendas.Data.Migrations
 {
     [DbContext(typeof(VendasDbContext))]
-    [Migration("20240926141209_Migration_20240926_111205")]
-    partial class Migration_20240926_111205
+    [Migration("20240926153719_CreateTablesMigrations")]
+    partial class CreateTablesMigrations
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

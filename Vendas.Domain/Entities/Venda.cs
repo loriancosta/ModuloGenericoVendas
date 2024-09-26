@@ -9,15 +9,14 @@
         public string NomeCliente { get; private set; }
 
         public List<ItemVenda> ItensVenda { get; private set; } = new List<ItemVenda>();
-
-        private bool _isCancelado = false;
+        private bool _isCancelado;
 
         public Venda(string numeroVenda, DateTime dataVenda, int clienteId, string nomeCliente)
         {
-            NumeroVenda = numeroVenda ?? throw new ArgumentNullException(nameof(numeroVenda));
+            NumeroVenda = !string.IsNullOrWhiteSpace(numeroVenda) ? numeroVenda : throw new ArgumentNullException(nameof(numeroVenda));
             DataVenda = dataVenda;
             ClienteId = clienteId;
-            NomeCliente = nomeCliente ?? throw new ArgumentNullException(nameof(nomeCliente));
+            NomeCliente = !string.IsNullOrWhiteSpace(nomeCliente) ? nomeCliente : throw new ArgumentNullException(nameof(nomeCliente));
         }
 
         public Venda(int id, string numeroVenda, DateTime dataVenda, int clienteId, string nomeCliente)
