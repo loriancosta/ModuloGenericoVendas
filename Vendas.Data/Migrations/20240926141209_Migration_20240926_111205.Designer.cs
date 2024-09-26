@@ -12,8 +12,8 @@ using Vendas.Data.Context;
 namespace Vendas.Data.Migrations
 {
     [DbContext(typeof(VendasDbContext))]
-    [Migration("20240925214446_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20240926141209_Migration_20240926_111205")]
+    partial class Migration_20240926_111205
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -38,12 +38,6 @@ namespace Vendas.Data.Migrations
                         .HasColumnType("decimal(18,2)")
                         .HasColumnName("Desconto");
 
-                    b.Property<string>("NomeProduto")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)")
-                        .HasColumnName("NomeProduto");
-
                     b.Property<decimal>("PrecoUnitario")
                         .HasColumnType("decimal(18,2)")
                         .HasColumnName("PrecoUnitario");
@@ -62,9 +56,39 @@ namespace Vendas.Data.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("ProdutoId");
+
                     b.HasIndex("VendaId");
 
                     b.ToTable("ItensVenda");
+                });
+
+            modelBuilder.Entity("Vendas.Domain.Entities.Produto", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("Id");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Descricao")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)")
+                        .HasColumnName("Descricao");
+
+                    b.Property<decimal>("PrecoUnitario")
+                        .HasColumnType("decimal(18,2)")
+                        .HasColumnName("PrecoUnitario");
+
+                    b.Property<int>("Quantidade")
+                        .HasColumnType("int")
+                        .HasColumnName("Quantidade");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Produtos");
                 });
 
             modelBuilder.Entity("Vendas.Domain.Entities.Venda", b =>
@@ -103,12 +127,23 @@ namespace Vendas.Data.Migrations
 
             modelBuilder.Entity("Vendas.Domain.Entities.ItemVenda", b =>
                 {
-                    b.HasOne("Vendas.Domain.Entities.Venda", null)
+                    b.HasOne("Vendas.Domain.Entities.Produto", "Produto")
+                        .WithMany()
+                        .HasForeignKey("ProdutoId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("FK_ItemVenda_Produto");
+
+                    b.HasOne("Vendas.Domain.Entities.Venda", "Venda")
                         .WithMany("ItensVenda")
                         .HasForeignKey("VendaId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("FK_ItemVenda_Venda");
+
+                    b.Navigation("Produto");
+
+                    b.Navigation("Venda");
                 });
 
             modelBuilder.Entity("Vendas.Domain.Entities.Venda", b =>

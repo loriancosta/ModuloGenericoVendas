@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Vendas.Data.Context;
 
@@ -11,9 +12,11 @@ using Vendas.Data.Context;
 namespace Vendas.Data.Migrations
 {
     [DbContext(typeof(VendasDbContext))]
-    partial class VendasDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240926141305_Migration_20240926_111259")]
+    partial class Migration_20240926_111259
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
