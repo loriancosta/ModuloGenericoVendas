@@ -1,13 +1,14 @@
-﻿using Vendas.Domain.Entities;
+﻿using Vendas.Application.Dtos;
+using Vendas.Domain.Entities;
 
 namespace Vendas.Application.Services.Interfaces
 {
     public interface IItemVendaService
     {
-        Task<ItemVenda> GetItemVendaByIdAsync(int id);
-        Task<IEnumerable<ItemVenda>> GetAllItensVendaAsync();
-        Task CreateItemVendaAsync(ItemVenda itemVenda);
-        Task UpdateItemVendaAsync(ItemVenda itemVenda);
-        Task RemoveItemVendaAsync(int id);
+        Task<ItemVendaDto> GetItemVendaByIdAsync(int id);
+        Task<IEnumerable<ItemVendaDto>> GetAllItensVendaAsync();
+        Task<int> CreateItemVendaAsync(ItemVendaDto itemVenda);
+        Task UpdateItemVendaAsync(ItemVendaDto itemVenda);
+        Task DeleteItemVendaAsync(int id);
     }
 }

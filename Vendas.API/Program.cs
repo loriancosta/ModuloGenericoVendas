@@ -8,12 +8,10 @@ using Vendas.Domain.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
-/*
---------------------
------ Serilog ------
---------------------
-*/
+// Configurações do AutoMapper
+builder.Services.AddAutoMapper(typeof(MappingProfile));
 
+// Serilog
 builder.Host.UseSerilog((context, config) =>
 {
     config
@@ -22,11 +20,6 @@ builder.Host.UseSerilog((context, config) =>
         .Enrich.FromLogContext();
 });
 
-/*
---------------------
---- Add Services ---
---------------------
-*/
 
 builder.Services.AddControllers();
 
@@ -46,11 +39,7 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-/*
---------------------
----- Middlewares ---
---------------------
-*/
+
 
 if (app.Environment.IsDevelopment())
 {

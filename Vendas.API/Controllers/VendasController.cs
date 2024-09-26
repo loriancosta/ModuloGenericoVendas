@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Vendas.Application.Services.Interfaces;
 using Vendas.Domain.Entities;
+using Vendas.Application.Dtos;
+using AutoMapper;
 
 namespace Vendas.API.Controllers
 {
@@ -10,15 +12,17 @@ namespace Vendas.API.Controllers
     {
         private readonly IVendaService _vendaService;
         private readonly IVendaEventService _vendaEventService;
+        private readonly IMapper _mapper;
 
-        public VendasController(IVendaService vendaService, IVendaEventService vendaEventService)
+        public VendasController(IVendaService vendaService, IVendaEventService vendaEventService, IMapper mapper)
         {
             _vendaService = vendaService;
             _vendaEventService = vendaEventService;
+            _mapper = mapper;
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Venda>>> GetVendas()
+        public async Task<ActionResult<IEnumerable<VendaDto>>> GetVendas()
         {
             var vendas = await _vendaService.GetAllVendasAsync();
             return Ok(vendas);
@@ -37,32 +41,23 @@ namespace Vendas.API.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<Venda>> CreateVenda(Venda venda)
+        public async Task<ActionResult> CreateVenda([FromBody] VendaDto vendaDto)
         {
-            await _vendaService.CreateVendaAsync(venda);
+            var vendaId = await _vendaService.CreateVendaAsync(vendaDto);
 
-            // Publicar evento de venda criada
-            _vendaEventService.CompraCriada(venda);
-
-            return CreatedAtAction(nameof(GetVenda), new { id = venda.Id }, venda);
+            return CreatedAtAction(nameof(GetVenda), new { id = vendaId }, vendaDto);
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateVenda(int id, Venda venda)
+        public async Task<IActionResult> UpdateVenda(int id, [FromBody] VendaDto vendaDto)
         {
-            if (id != venda.Id)
-            {
-                return BadRequest();
-            }
+            if (id != vendaDto.Id)
+                return BadRequest("O ID da venda não corresponde ao ID da URL.");
 
             if (!await VendaExists(id))
-            {
                 return NotFound();
-            }
 
-            await _vendaService.UpdateVendaAsync(venda);
-
-            _vendaEventService.CompraAlterada(venda);
+            await _vendaService.UpdateVendaAsync(vendaDto);
 
             return NoContent();
         }
@@ -70,19 +65,17 @@ namespace Vendas.API.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> CancelVenda(int id)
         {
-            if (!await VendaExists(id))
+            try
+            {
+                await _vendaService.DeleteVendaAsync(id);
+                return NoContent();
+            }
+            catch (KeyNotFoundException)
             {
                 return NotFound();
             }
-
-            var venda = await _vendaService.GetVendaByIdAsync(id);
-            venda.CancelarVenda();
-            await _vendaService.UpdateVendaAsync(venda);
-
-            _vendaEventService.CompraCancelada(venda);
-
-            return NoContent();
         }
+
 
         private async Task<bool> VendaExists(int id)
         {

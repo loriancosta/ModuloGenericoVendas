@@ -1,4 +1,6 @@
-﻿using Vendas.Application.Services.Interfaces;
+﻿using AutoMapper;
+using Vendas.Application.Dtos;
+using Vendas.Application.Services.Interfaces;
 using Vendas.Domain.Entities;
 using Vendas.Domain.Interfaces;
 
@@ -7,38 +9,59 @@ namespace Vendas.Application.Services.Implementations
     public class ItemVendaService : IItemVendaService
     {
         private readonly IItemVendaRepository _itemVendaRepository;
+        private readonly IItemVendaEventService _itemVendaEventService;
+        private readonly IMapper _mapper;
 
-        public ItemVendaService(IItemVendaRepository itemVendaRepository)
+        public ItemVendaService(IItemVendaRepository itemVendaRepository, IItemVendaEventService itemVendaEventService, IMapper mapper)
         {
             _itemVendaRepository = itemVendaRepository;
+            _itemVendaEventService = itemVendaEventService;
+            _mapper = mapper;
         }
 
-        public async Task<ItemVenda> GetItemVendaByIdAsync(int id)
+        public async Task<IEnumerable<ItemVendaDto>> GetAllItensVendaAsync()
         {
-            return await _itemVendaRepository.GetByIdAsync(id);
+            var itensVenda = await _itemVendaRepository.GetAllAsync();
+            return _mapper.Map<IEnumerable<ItemVendaDto>>(itensVenda);
         }
 
-        public async Task<IEnumerable<ItemVenda>> GetAllItensVendaAsync()
+        public async Task<ItemVendaDto> GetItemVendaByIdAsync(int id)
         {
-            return await _itemVendaRepository.GetAllAsync();
+            var itemVenda = await _itemVendaRepository.GetByIdAsync(id);
+            return _mapper.Map<ItemVendaDto>(itemVenda);
         }
 
-        public async Task CreateItemVendaAsync(ItemVenda itemVenda)
+        public async Task<int> CreateItemVendaAsync(ItemVendaDto itemVendaDto)
         {
+            var itemVenda = _mapper.Map<ItemVenda>(itemVendaDto);
+
             await _itemVendaRepository.AddAsync(itemVenda);
             await _itemVendaRepository.SaveChangesAsync();
+
+            _itemVendaEventService.ItemCriado(itemVenda);
+
+            return itemVenda.Id;
         }
 
-        public async Task UpdateItemVendaAsync(ItemVenda itemVenda)
+        public async Task UpdateItemVendaAsync(ItemVendaDto itemVendaDto)
         {
+            var itemVenda = _mapper.Map<ItemVenda>(itemVendaDto);
+            var itemExistente = await _itemVendaRepository.GetByIdAsync(itemVenda.Id);
+
             await _itemVendaRepository.UpdateAsync(itemVenda);
             await _itemVendaRepository.SaveChangesAsync();
+
+            _itemVendaEventService.ItemAlterado(itemVenda);
         }
 
-        public async Task RemoveItemVendaAsync(int id)
+        public async Task DeleteItemVendaAsync(int id)
         {
+            var itemExistente = await _itemVendaRepository.GetByIdAsync(id);
+
             await _itemVendaRepository.DeleteAsync(id);
             await _itemVendaRepository.SaveChangesAsync();
+
+            _itemVendaEventService.ItemCancelado(itemExistente);
         }
     }
 }

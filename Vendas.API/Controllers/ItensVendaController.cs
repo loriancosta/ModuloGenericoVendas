@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Vendas.Application.Dtos;
 using Vendas.Application.Services.Interfaces;
-using Vendas.Domain.Entities;
 
 namespace Vendas.API.Controllers
 {
@@ -9,82 +9,52 @@ namespace Vendas.API.Controllers
     public class ItensVendaController : ControllerBase
     {
         private readonly IItemVendaService _itemVendaService;
-        private readonly IItemVendaEventService _itemVendaEventService;
 
-        public ItensVendaController(IItemVendaService itemVendaService, IItemVendaEventService itemVendaEventService)
+        public ItensVendaController(IItemVendaService itemVendaService)
         {
             _itemVendaService = itemVendaService;
-            _itemVendaEventService = itemVendaEventService;
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ItemVenda>>> GetItensVenda()
+        public async Task<ActionResult<IEnumerable<ItemVendaDto>>> GetItensVenda()
         {
             var itensVenda = await _itemVendaService.GetAllItensVendaAsync();
             return Ok(itensVenda);
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<ItemVenda>> GetItemVenda(int id)
+        public async Task<ActionResult<ItemVendaDto>> GetItemVenda(int id)
         {
             var itemVenda = await _itemVendaService.GetItemVendaByIdAsync(id);
 
             if (itemVenda == null)
-            {
                 return NotFound();
-            }
 
             return Ok(itemVenda);
         }
 
         [HttpPost]
-        public async Task<ActionResult<ItemVenda>> CreateItemVenda(ItemVenda itemVenda)
+        public async Task<ActionResult> CreateItemVenda([FromBody] ItemVendaDto itemVendaDto)
         {
-            await _itemVendaService.CreateItemVendaAsync(itemVenda);
-            _itemVendaEventService.ItemCriado(itemVenda);
-
-            return CreatedAtAction(nameof(GetItemVenda), new { id = itemVenda.VendaId }, itemVenda);
+            var itemVendaId = await _itemVendaService.CreateItemVendaAsync(itemVendaDto);
+            return CreatedAtAction(nameof(GetItemVenda), new { id = itemVendaId }, itemVendaDto);
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateItemVenda(int id, ItemVenda itemVenda)
+        public async Task<IActionResult> UpdateItemVenda(int id, [FromBody] ItemVendaDto itemVendaDto)
         {
-            if (id != itemVenda.Id)
-            {
-                return BadRequest();
-            }
+            if (id != itemVendaDto.Id)
+                return BadRequest("O ID informado não corresponde ao ID do item.");
 
-            if (!await ItemVendaExists(id))
-            {
-                return NotFound();
-            }
-
-            await _itemVendaService.UpdateItemVendaAsync(itemVenda);
-            _itemVendaEventService.ItemAlterado(itemVenda);
-
+            await _itemVendaService.UpdateItemVendaAsync(itemVendaDto);
             return NoContent();
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> CancelItemVenda(int id)
+        public async Task<IActionResult> DeleteItemVenda(int id)
         {
-            if (!await ItemVendaExists(id))
-            {
-                return NotFound();
-            }
-
-            var itemVenda = await _itemVendaService.GetItemVendaByIdAsync(id);
-            await _itemVendaService.RemoveItemVendaAsync(id);
-
-            _itemVendaEventService.ItemCancelado(itemVenda);
-
+            await _itemVendaService.DeleteItemVendaAsync(id);
             return NoContent();
-        }
-
-        private async Task<bool> ItemVendaExists(int id)
-        {
-            var itemVenda = await _itemVendaService.GetItemVendaByIdAsync(id);
-            return itemVenda != null;
         }
     }
 }
