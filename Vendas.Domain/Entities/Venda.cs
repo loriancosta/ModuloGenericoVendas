@@ -7,26 +7,19 @@
         public DateTime DataVenda { get; set; }
         public int ClienteId { get; set; }
         public string NomeCliente { get; set; }
+        public bool IsCancelado { get; set; }
 
         public List<ItemVenda> ItensVenda { get; set; } = new List<ItemVenda>();
-        private bool _isCancelado;
-
-        public Venda(string numeroVenda, DateTime dataVenda, int clienteId, string nomeCliente)
+        
+        public Venda(string numeroVenda, DateTime dataVenda, int clienteId, string nomeCliente, bool isCancelado)
         {
             NumeroVenda = !string.IsNullOrWhiteSpace(numeroVenda) ? numeroVenda : throw new ArgumentNullException(nameof(numeroVenda));
             DataVenda = dataVenda;
             ClienteId = clienteId;
             NomeCliente = !string.IsNullOrWhiteSpace(nomeCliente) ? nomeCliente : throw new ArgumentNullException(nameof(nomeCliente));
+            IsCancelado = isCancelado;
         }
 
-        public bool CancelarVenda()
-        {
-            if (_isCancelado)
-                throw new InvalidOperationException("A venda já foi cancelada.");
-
-            _isCancelado = true;
-            return _isCancelado;
-        }
 
     }
 }

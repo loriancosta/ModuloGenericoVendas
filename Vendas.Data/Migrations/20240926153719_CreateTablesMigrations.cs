@@ -4,10 +4,8 @@
 
 namespace Vendas.Data.Migrations
 {
-    /// <inheritdoc />
     public partial class CreateTablesMigrations : Migration
     {
-        /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
@@ -34,7 +32,8 @@ namespace Vendas.Data.Migrations
                     NumeroVenda = table.Column<string>(maxLength: 100, nullable: false),
                     DataVenda = table.Column<DateTime>(nullable: false),
                     ClienteId = table.Column<int>(nullable: false),
-                    NomeCliente = table.Column<string>(maxLength: 100, nullable: false)
+                    NomeCliente = table.Column<string>(maxLength: 100, nullable: false),
+                    IsCancelado = table.Column<bool>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -51,24 +50,35 @@ namespace Vendas.Data.Migrations
                     ProdutoId = table.Column<int>(nullable: false),
                     Quantidade = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     PrecoUnitario = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    Desconto = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
+                    Desconto = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    IsCancelado = table.Column<bool>(nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_ItensVenda", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_ItemVenda_Venda",
+                        name: "FK_ItensVenda_Vendas",
                         column: x => x.VendaId,
                         principalTable: "Vendas",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_ItemVenda_Produto",
+                        name: "FK_ItensVenda_Produtos",
                         column: x => x.ProdutoId,
                         principalTable: "Produtos",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ItensVenda_VendaId",
+                table: "ItensVenda",
+                column: "VendaId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ItensVenda_ProdutoId",
+                table: "ItensVenda",
+                column: "ProdutoId");
 
             migrationBuilder.Sql(@"
             INSERT INTO Produtos 
@@ -93,8 +103,13 @@ namespace Vendas.Data.Migrations
                     ('Headset Gamer com Microfone', 35, 279.90),
                     ('Leitor de Cartão de Memória', 50, 49.99),
                     ('Caixa de Som Bluetooth', 20, 199.99);");
+        }
 
-
+        protected override void Down(MigrationBuilder migrationBuilder)
+        {
+            migrationBuilder.DropTable(name: "ItensVenda");
+            migrationBuilder.DropTable(name: "Vendas");
+            migrationBuilder.DropTable(name: "Produtos");
         }
     }
 }

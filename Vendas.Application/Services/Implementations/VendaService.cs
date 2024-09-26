@@ -68,12 +68,21 @@ namespace Vendas.Application.Services.Implementations
             if (venda == null)
                 throw new KeyNotFoundException("Venda não encontrada.");
 
-            venda.CancelarVenda();
-
             await _vendaRepository.UpdateAsync(venda);
             await _vendaRepository.SaveChangesAsync();
 
             _vendaEventService.CompraCancelada(venda);
+        }
+
+        public async Task CancelVendaAsync(int vendaId)
+        {
+            var venda = await _vendaRepository.GetByIdAsync(vendaId);
+            if (venda == null)
+                throw new Exception("Venda não encontrada");
+
+            venda.IsCancelado = true;
+
+            await _vendaRepository.UpdateAsync(venda);
         }
     }
 }

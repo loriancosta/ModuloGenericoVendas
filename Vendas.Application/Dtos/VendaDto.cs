@@ -9,6 +9,8 @@ namespace Vendas.Application.Dtos
         public DateTime DataVenda { get; set; }
         public int ClienteId { get; set; }
         public string NomeCliente { get; set; }
+        public bool IsCancelado { get; set; }
+
         public List<ItemVendaDto> ItensVenda { get; set; } = new List<ItemVendaDto>();
 
     }

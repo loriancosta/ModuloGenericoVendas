@@ -73,6 +73,19 @@ namespace Vendas.API.Controllers
             }
         }
 
+        [HttpPut("{id}/cancel")]
+        public async Task<IActionResult> CancelarVenda(int id)
+        {
+            try
+            {
+                await _vendaService.CancelVendaAsync(id);
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
 
         private async Task<bool> VendaExists(int id)
         {

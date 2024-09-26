@@ -21,10 +21,5 @@ namespace Vendas.Application.Services.Implementations
         {
             Log.Information($"CompraCancelada - Venda: {venda.NumeroVenda}");
         }
-
-        public void ItemCancelado(ItemVenda itemVenda)
-        {
-            Log.Information($"ItemCancelado - O item {itemVenda.ProdutoId}");
-        }
     }
 }

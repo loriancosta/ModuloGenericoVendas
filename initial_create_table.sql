@@ -1,9 +1,10 @@
 -- Requitos
--- 1. Criar o Banco "VendaDB"
--- Rodar todos o script abaixo
+-- 1. Criar o Banco "VendasDB"
+-- 2. Rodar todos o script abaixo
 
-IF OBJECT_ID(N'dbo.Produtos', N'U') IS NOT NULL BEGIN DROP TABLE Produtos; END
+
 IF OBJECT_ID(N'dbo.ItensVenda', N'U') IS NOT NULL BEGIN DROP TABLE ItensVenda; END
+IF OBJECT_ID(N'dbo.Produtos', N'U') IS NOT NULL BEGIN DROP TABLE Produtos; END
 IF OBJECT_ID(N'dbo.Vendas', N'U') IS NOT NULL BEGIN DROP TABLE Vendas; END
 
 CREATE TABLE Produtos (
@@ -18,7 +19,8 @@ CREATE TABLE Vendas (
     NumeroVenda NVARCHAR(100) NOT NULL,
     DataVenda DATETIME2 NOT NULL,
     ClienteId INT NOT NULL,
-    NomeCliente NVARCHAR(100) NOT NULL
+    NomeCliente NVARCHAR(100) NOT NULL,
+	IsCancelado BIT NOT NULL
 );
 
 CREATE TABLE ItensVenda (

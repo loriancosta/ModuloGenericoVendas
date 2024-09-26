@@ -1,5 +1,4 @@
 ﻿using Vendas.Application.Dtos;
-using Vendas.Domain.Entities;
 
 namespace Vendas.Application.Services.Interfaces
 {
@@ -10,5 +9,6 @@ namespace Vendas.Application.Services.Interfaces
         Task<int> CreateVendaAsync(VendaDto venda);
         Task UpdateVendaAsync(VendaDto venda);
         Task DeleteVendaAsync(int id);
+        Task CancelVendaAsync(int vendaId);
     }
 }
