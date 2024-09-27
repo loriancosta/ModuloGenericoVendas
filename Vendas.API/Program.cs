@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
+using Vendas.Application.Events.Implementations;
+using Vendas.Application.Events.Interfaces;
 using Vendas.Application.Services.Implementations;
 using Vendas.Application.Services.Interfaces;
 using Vendas.Data.Context;
@@ -23,17 +25,16 @@ builder.Services.AddAutoMapper(typeof(MappingProfile));
 
 builder.Services.AddControllers();
 
-builder.Services.AddScoped<IVendaEventService, VendaEventService>();
-builder.Services.AddScoped<IItemVendaEventService, ItemVendaEventService>();
-
 builder.Services.AddScoped<IVendaService, VendaService>();
-builder.Services.AddScoped<IVendaRepository, VendaRepository>();
-
 builder.Services.AddScoped<IItemVendaService, ItemVendaService>();
-builder.Services.AddScoped<IItemVendaRepository, ItemVendaRepository>();
-
 builder.Services.AddScoped<IProdutoService, ProdutoService>();
+
+builder.Services.AddScoped<IVendaRepository, VendaRepository>();
+builder.Services.AddScoped<IItemVendaRepository, ItemVendaRepository>();
 builder.Services.AddScoped<IProdutoRepository, ProdutoRepository>();
+
+builder.Services.AddScoped<IVendaEvent, VendaEvent>();
+builder.Services.AddScoped<IItemVendaEvent, ItemVendaEvent>();
 
 builder.Services.AddDbContext<VendasDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));

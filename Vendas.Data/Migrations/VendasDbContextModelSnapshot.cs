@@ -117,6 +117,10 @@ namespace Vendas.Data.Migrations
                         .HasColumnType("nvarchar(100)")
                         .HasColumnName("NumeroVenda");
 
+                    b.Property<bool>("IsCancelado")
+                        .HasColumnType("bit")
+                        .HasColumnName("IsCancelado");
+
                     b.HasKey("Id");
 
                     b.ToTable("Vendas");

@@ -1,10 +1,10 @@
 ﻿using Serilog;
 using Vendas.Domain.Entities;
-using Vendas.Application.Services.Interfaces;
+using Vendas.Application.Events.Interfaces;
 
-namespace Vendas.Application.Services.Implementations
+namespace Vendas.Application.Events.Implementations
 {
-    public class VendaEventService : IVendaEventService
+    public class VendaEvent : IVendaEvent
     {
 
         public void CompraCriada(Venda venda)

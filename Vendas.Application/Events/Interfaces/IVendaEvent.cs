@@ -1,8 +1,8 @@
 ﻿using Vendas.Domain.Entities;
 
-namespace Vendas.Application.Services.Interfaces
+namespace Vendas.Application.Events.Interfaces
 {
-    public interface IVendaEventService
+    public interface IVendaEvent
     {
         void CompraCriada(Venda venda);
         void CompraAlterada(Venda venda);

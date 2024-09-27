@@ -6,7 +6,7 @@ namespace Vendas.Data.Repositories.Implementations
 {
     public class GenericRepository<T> : IGenericRepository<T> where T : class
     {
-        private readonly VendasDbContext _context;
+        protected readonly VendasDbContext _context;
         private readonly DbSet<T> _dbSet;
 
         public GenericRepository(VendasDbContext context)

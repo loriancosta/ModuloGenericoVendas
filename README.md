@@ -2,7 +2,7 @@
 
 ## Especs
 # .NET 8
-# EntityFramework Core
+# Entity Framework Core
 
 
 ### EXECUÇÃO ###
@@ -12,7 +12,12 @@
 
 ## BANCO ##
 
-Executar "migration_script.bat" disponível na raiz da solução
+Nome: VendasDB
 
-Se por algum motivo der erro, executar o script "initial_create_table.sql" diretamente no banco
+Executar "migration_script.bat" disponível na raiz da solução
+"Dois cliques"
+
+Obs: Se por algum motivo der erro em migration_script, executar o script "initial_create_table.sql" diretamente no banco.
+
+
 

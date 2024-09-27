@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Vendas.Application.Dtos;
+using Vendas.Application.Events.Interfaces;
 using Vendas.Application.Services.Interfaces;
 using Vendas.Domain.Entities;
 
@@ -10,9 +11,9 @@ namespace Vendas.API.Controllers
     public class VendasController : ControllerBase
     {
         private readonly IVendaService _vendaService;
-        private readonly IVendaEventService _vendaEventService;
+        private readonly IVendaEvent _vendaEventService;
 
-        public VendasController(IVendaService vendaService, IVendaEventService vendaEventService)
+        public VendasController(IVendaService vendaService, IVendaEvent vendaEventService)
         {
             _vendaService = vendaService;
             _vendaEventService = vendaEventService;
@@ -22,7 +23,12 @@ namespace Vendas.API.Controllers
         public async Task<ActionResult<IEnumerable<VendaDto>>> GetVendas()
         {
             var vendas = await _vendaService.GetAllVendasAsync();
-            return Ok(vendas);
+            if (vendas == null || !vendas.Any())
+            {
+                return NotFound(new { message = "Nenhuma venda encontrada." });
+            }
+
+            return Ok(new { message = "Vendas recuperadas com sucesso.", vendas });
         }
 
         [HttpGet("{id}")]
@@ -31,10 +37,10 @@ namespace Vendas.API.Controllers
             var venda = await _vendaService.GetVendaByIdAsync(id);
             if (venda == null)
             {
-                return NotFound();
+                return NotFound(new { message = $"Venda com ID {id} não encontrada." });
             }
 
-            return Ok(venda);
+            return Ok(new { message = "Venda recuperada com sucesso.", venda });
         }
 
         [HttpPost]
@@ -42,48 +48,34 @@ namespace Vendas.API.Controllers
         {
             var vendaId = await _vendaService.CreateVendaAsync(vendaDto);
 
-            return CreatedAtAction(nameof(GetVenda), new { id = vendaId }, vendaDto);
+            return CreatedAtAction(nameof(GetVenda), new { id = vendaId }, new { message = "Venda criada com sucesso.", vendaId });
         }
 
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateVenda(int id, [FromBody] VendaDto vendaDto)
         {
             if (id != vendaDto.Id)
-                return BadRequest("O ID da venda não corresponde ao ID da URL.");
+                return BadRequest(new { message = "O ID da venda não corresponde ao ID da URL." });
 
             if (!await VendaExists(id))
-                return NotFound();
+                return NotFound(new { message = $"Venda {id} não encontrada." });
 
             await _vendaService.UpdateVendaAsync(vendaDto);
 
-            return NoContent();
+            return Ok(new { message = "Venda atualizada com sucesso." });
         }
 
-        [HttpDelete("{id}")]
+        [HttpPut("{id}/cancel")]
         public async Task<IActionResult> CancelVenda(int id)
         {
             try
             {
-                await _vendaService.DeleteVendaAsync(id);
-                return NoContent();
+                await _vendaService.CancelVendaAsync(id);
+                return Ok(new { message = "Venda cancelada com sucesso." });
             }
             catch (KeyNotFoundException)
             {
-                return NotFound();
-            }
-        }
-
-        [HttpPut("{id}/cancel")]
-        public async Task<IActionResult> CancelarVenda(int id)
-        {
-            try
-            {
-                await _vendaService.CancelVendaAsync(id);
-                return NoContent();
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
+                return NotFound(new { message = $"Venda {id} não encontrada para cancelamento." });
             }
         }
 

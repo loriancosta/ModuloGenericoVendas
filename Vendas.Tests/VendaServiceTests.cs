@@ -12,14 +12,16 @@ using AutoMapper;
 using Vendas.Application.Dtos;
 using Vendas.Data.Repositories.Implementations;
 using Vendas.Domain.Interfaces;
+using Vendas.Application.Events.Interfaces;
 
 public class VendaServiceTests
 {
     private readonly VendasDbContext _context;
-    private readonly IVendaService _vendaService;
+    private readonly IVendaService _vendaService;    
     private readonly IProdutoRepository _produtoRepository;
+    private readonly Mock<IItemVendaService> _itemVendaServiceMock;
     private readonly Mock<IVendaRepository> _vendaRepositoryMock;
-    private readonly Mock<IVendaEventService> _vendaEventServiceMock;
+    private readonly Mock<IVendaEvent> _vendaEventServiceMock;
     private readonly Mock<IMapper> _mapperMock;
 
     public VendaServiceTests()
@@ -33,10 +35,12 @@ public class VendaServiceTests
 
         // Mocando a DI
         _vendaRepositoryMock = new Mock<IVendaRepository>();
-        _vendaEventServiceMock = new Mock<IVendaEventService>();
+        _vendaEventServiceMock = new Mock<IVendaEvent>();
+        _itemVendaServiceMock = new Mock<IItemVendaService>();
+
         _mapperMock = new Mock<IMapper>();
 
-        _vendaService = new VendaService(_vendaRepositoryMock.Object, _vendaEventServiceMock.Object, _mapperMock.Object);
+        _vendaService = new VendaService(_vendaRepositoryMock.Object, _vendaEventServiceMock.Object, _mapperMock.Object, _itemVendaServiceMock.Object);
 
         SeedProdutosAsync().GetAwaiter().GetResult();
     }

@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Vendas.Application.Dtos;
+using Vendas.Application.Events.Interfaces;
 using Vendas.Application.Services.Interfaces;
 using Vendas.Domain.Entities;
 using Vendas.Domain.Interfaces;
@@ -9,10 +10,10 @@ namespace Vendas.Application.Services.Implementations
     public class ItemVendaService : IItemVendaService
     {
         private readonly IItemVendaRepository _itemVendaRepository;
-        private readonly IItemVendaEventService _itemVendaEventService;
+        private readonly IItemVendaEvent _itemVendaEventService;
         private readonly IMapper _mapper;
 
-        public ItemVendaService(IItemVendaRepository itemVendaRepository, IItemVendaEventService itemVendaEventService, IMapper mapper)
+        public ItemVendaService(IItemVendaRepository itemVendaRepository, IItemVendaEvent itemVendaEventService, IMapper mapper)
         {
             _itemVendaRepository = itemVendaRepository;
             _itemVendaEventService = itemVendaEventService;
@@ -45,18 +46,23 @@ namespace Vendas.Application.Services.Implementations
 
         public async Task UpdateItemVendaAsync(ItemVendaDto itemVendaDto)
         {
-            var itemVenda = _mapper.Map<ItemVenda>(itemVendaDto);
-            var itemExistente = await _itemVendaRepository.GetByIdAsync(itemVenda.Id);
+            var itemExistente = await _itemVendaRepository.GetByIdAsync(itemVendaDto.Id);
+            if (itemExistente == null)
+                throw new Exception("Item de venda não encontrado");
 
-            await _itemVendaRepository.UpdateAsync(itemVenda);
+            var itemAtualizado = _mapper.Map(itemVendaDto, itemExistente);
+
+            await _itemVendaRepository.UpdateAsync(itemAtualizado);
             await _itemVendaRepository.SaveChangesAsync();
 
-            _itemVendaEventService.ItemAlterado(itemVenda);
+            _itemVendaEventService.ItemAlterado(itemAtualizado);
         }
 
         public async Task DeleteItemVendaAsync(int id)
         {
             var itemExistente = await _itemVendaRepository.GetByIdAsync(id);
+            if (itemExistente == null)
+                throw new Exception("Item de venda não encontrado");
 
             await _itemVendaRepository.DeleteAsync(id);
             await _itemVendaRepository.SaveChangesAsync();

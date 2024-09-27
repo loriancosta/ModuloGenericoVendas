@@ -1,11 +1,8 @@
-﻿using Xunit;
+﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
+using Vendas.Application.Dtos;
 using Vendas.Data.Context;
 using Vendas.Domain.Entities;
-using Vendas.Application.Dtos;
-using Microsoft.EntityFrameworkCore;
-using AutoMapper;
-using System.Threading.Tasks;
-using System.Linq;
 
 namespace Vendas.Tests
 {
@@ -64,7 +61,7 @@ namespace Vendas.Tests
             var produtosInseridos = await _context.Produtos.ToListAsync();
 
             // Testando algumas regras
-            Assert.Equal(20, produtosInseridos.Count);            
+            Assert.Equal(20, produtosInseridos.Count);
             Assert.Contains(produtosInseridos, p => p.Descricao == "Fone de Ouvido Bluetooth");
             Assert.Contains(produtosInseridos, p => p.Descricao == "Caixa de Som Bluetooth");
         }

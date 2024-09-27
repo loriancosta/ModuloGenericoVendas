@@ -46,6 +46,7 @@ namespace Vendas.Data.Context
                 entity.Property(e => e.DataVenda).HasColumnName("DataVenda").IsRequired();
                 entity.Property(e => e.ClienteId).HasColumnName("ClienteId").IsRequired();
                 entity.Property(e => e.NomeCliente).HasColumnName("NomeCliente").HasMaxLength(100).IsRequired();
+                entity.Property(e => e.IsCancelado).HasColumnName("IsCancelado").HasColumnType("bit").IsRequired();
             });
 
             modelBuilder.Entity<Produto>(entity =>
